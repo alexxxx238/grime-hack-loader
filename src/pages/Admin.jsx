@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
-import { Users, Key, RefreshCw, Plus, Search, LogOut, Copy, Trash2, CheckCircle, AlertCircle } from 'lucide-react'
+import { Users, Key, RefreshCw, Plus, Search, LogOut, Copy, Trash2, CheckCircle, AlertCircle, Eye, X } from 'lucide-react'
 import api from '../lib/api'
 
 const TABS = ['Users', 'Keys']
@@ -20,6 +20,7 @@ export default function Admin() {
   const [keyForm, setKeyForm] = useState({ product: 'GRIME:ALTV', days: 30 })
   const [newKey, setNewKey] = useState('')
   const [creatingKey, setCreatingKey] = useState(false)
+  const [viewKey, setViewKey] = useState(null)
 
   const flash = (text, type = 'success') => {
     setMsg({ text, type })
@@ -99,6 +100,24 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-bg">
+      {/* Key view modal */}
+      {viewKey && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center px-4" onClick={() => setViewKey(null)}>
+          <div className="bg-surface border border-border rounded-xl p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-white">License Key</h3>
+              <button onClick={() => setViewKey(null)} className="text-gray-500 hover:text-white"><X size={16} /></button>
+            </div>
+            <div className="flex items-center gap-2 bg-bg border border-border rounded-lg px-4 py-3">
+              <code className="flex-1 text-green-300 text-sm font-mono break-all">{viewKey}</code>
+              <button onClick={() => { navigator.clipboard.writeText(viewKey); }} className="text-gray-500 hover:text-gray-300 flex-shrink-0">
+                <Copy size={14} />
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 mt-3">Keep this key safe. Share only with the buyer.</p>
+          </div>
+        </div>
+      )}
       <nav className="border-b border-border bg-bg sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -277,9 +296,16 @@ export default function Admin() {
                           }
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <button onClick={() => deleteKey(k.id)} className="text-gray-500 hover:text-red-400 transition-colors">
-                            <Trash2 size={14} />
-                          </button>
+                          <div className="flex items-center gap-2 justify-end">
+                            {k.encrypted_key && (
+                              <button onClick={() => setViewKey(k.encrypted_key)} title="View key" className="text-gray-500 hover:text-blue-400 transition-colors">
+                                <Eye size={14} />
+                              </button>
+                            )}
+                            <button onClick={() => deleteKey(k.id)} className="text-gray-500 hover:text-red-400 transition-colors">
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     )

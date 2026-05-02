@@ -151,7 +151,7 @@ export default async function handler(req, res) {
     if (url === '/admin/keys' && req.method === 'GET') {
       const p = admin(req, res); if (!p) return
       const [rows] = await pool.query(
-        "SELECT id, license_key_hash, product, hwid, expires_at, is_banned, created_at FROM licenses WHERE product IN ('GRIME:ALTV','GRIME:RAGEMP') ORDER BY created_at DESC LIMIT 200"
+        "SELECT id, license_key_hash, encrypted_key, product, hwid, expires_at, is_banned, created_at FROM licenses WHERE product IN ('GRIME:ALTV','GRIME:RAGEMP') ORDER BY created_at DESC LIMIT 200"
       )
       return res.status(200).json(rows)
     }
@@ -163,7 +163,7 @@ export default async function handler(req, res) {
       const rawKey = genKey()
       const kh = crypto.createHash('sha256').update(rawKey).digest('hex')
       const expiresAt = new Date(Date.now() + days * 86400000)
-      await pool.query('INSERT INTO licenses (license_key_hash, product, expires_at, is_banned, created_at) VALUES (?, ?, ?, 0, NOW())', [kh, product, expiresAt])
+      await pool.query('INSERT INTO licenses (license_key_hash, encrypted_key, product, expires_at, is_banned, created_at) VALUES (?, ?, ?, ?, 0, NOW())', [kh, rawKey, product, expiresAt])
       return res.status(201).json({ key: rawKey, expires_at: expiresAt, product })
     }
 
