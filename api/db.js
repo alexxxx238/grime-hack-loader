@@ -7,8 +7,7 @@ const pool = mysql.createPool({
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   waitForConnections: true,
-  connectionLimit: 5,
-  ssl: { rejectUnauthorized: false }
+  connectionLimit: 5
 })
 
 export default pool
