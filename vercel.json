@@ -1,17 +1,6 @@
 {
   "rewrites": [
-    { "source": "/api/auth/login",            "destination": "/api/auth/login" },
-    { "source": "/api/auth/register",         "destination": "/api/auth/register" },
-    { "source": "/api/auth/me",               "destination": "/api/auth/me" },
-    { "source": "/api/keys/activate",         "destination": "/api/keys/activate" },
-    { "source": "/api/loader/verify",         "destination": "/api/loader/verify" },
-    { "source": "/api/dashboard/subscription","destination": "/api/dashboard/subscription" },
-    { "source": "/api/dashboard/hwid",        "destination": "/api/dashboard/hwid" },
-    { "source": "/api/admin/users",           "destination": "/api/admin/users/index" },
-    { "source": "/api/admin/users/ban",       "destination": "/api/admin/users/ban" },
-    { "source": "/api/admin/keys",            "destination": "/api/admin/keys/index" },
-    { "source": "/api/admin/keys/create",     "destination": "/api/admin/keys/create" },
-    { "source": "/api/admin/hwid/reset",      "destination": "/api/admin/hwid/reset" },
-    { "source": "/(.*)",                      "destination": "/index.html" }
+    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/(.*)",     "destination": "/index.html" }
   ]
 }
