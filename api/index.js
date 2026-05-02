@@ -150,9 +150,15 @@ export default async function handler(req, res) {
     // ── GET /admin/keys ─────────────────────────────────────────────────────
     if (url === '/admin/keys' && req.method === 'GET') {
       const p = admin(req, res); if (!p) return
-      const [rows] = await pool.query(
-        "SELECT id, license_key_hash, encrypted_key, product, hwid, expires_at, is_banned, created_at FROM licenses WHERE product IN ('GRIME:ALTV','GRIME:RAGEMP') ORDER BY created_at DESC LIMIT 200"
-      )
+      const [rows] = await pool.query(`
+        SELECT l.id, l.license_key_hash, l.encrypted_key, l.product, l.hwid, l.expires_at, l.is_banned, l.created_at,
+               ul.user_id, u.username as bound_username
+        FROM licenses l
+        LEFT JOIN user_licenses ul ON ul.license_id = l.id
+        LEFT JOIN users u ON u.id = ul.user_id
+        WHERE l.product IN ('GRIME:ALTV','GRIME:RAGEMP')
+        ORDER BY l.created_at DESC LIMIT 200
+      `)
       return res.status(200).json(rows)
     }
 

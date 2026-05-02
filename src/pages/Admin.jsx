@@ -291,7 +291,9 @@ export default function Admin() {
                             : expired
                             ? <span className="text-gray-500 text-xs">Expired</span>
                             : k.hwid
-                            ? <span className="text-blue-400 text-xs">In use</span>
+                            ? <span className="text-blue-400 text-xs" title={k.bound_username}>In use {k.bound_username ? `· ${k.bound_username}` : ''}</span>
+                            : k.user_id
+                            ? <span className="text-yellow-400 text-xs" title={k.bound_username}>Activated · {k.bound_username || '?'}</span>
                             : <span className="text-green-400 text-xs">Available</span>
                           }
                         </td>
