@@ -150,7 +150,9 @@ export default async function handler(req, res) {
     // ── GET /admin/keys ─────────────────────────────────────────────────────
     if (url === '/admin/keys' && req.method === 'GET') {
       const p = admin(req, res); if (!p) return
-      const [rows] = await pool.query('SELECT id, license_key_hash, product, hwid, expires_at, is_banned, created_at FROM licenses ORDER BY created_at DESC LIMIT 200')
+      const [rows] = await pool.query(
+        "SELECT id, license_key_hash, product, hwid, expires_at, is_banned, created_at FROM licenses WHERE product IN ('GRIME:ALTV','GRIME:RAGEMP') ORDER BY created_at DESC LIMIT 200"
+      )
       return res.status(200).json(rows)
     }
 
