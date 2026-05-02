@@ -1,0 +1,43 @@
+import React from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider, useAuth } from './context/AuthContext'
+import Landing from './pages/Landing'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Dashboard from './pages/Dashboard'
+import Admin from './pages/Admin'
+
+function PrivateRoute({ children }) {
+  const { user, loading } = useAuth()
+  if (loading) return <div className="flex items-center justify-center h-screen bg-bg"><div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" /></div>
+  return user ? children : <Navigate to="/login" replace />
+}
+
+function AdminRoute({ children }) {
+  const { user, loading } = useAuth()
+  if (loading) return null
+  if (!user) return <Navigate to="/login" replace />
+  if (!user.is_admin) return <Navigate to="/dashboard" replace />
+  return children
+}
+
+function GuestRoute({ children }) {
+  const { user, loading } = useAuth()
+  if (loading) return null
+  return user ? <Navigate to="/dashboard" replace /> : children
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
+        <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AuthProvider>
+  )
+}
