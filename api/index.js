@@ -62,7 +62,8 @@ export default async function handler(req, res) {
       const p = auth(req, res); if (!p) return
       const [rows] = await pool.query('SELECT id, username, email, is_admin, is_active, created_at FROM users WHERE id = ? LIMIT 1', [p.id])
       if (!rows[0]) return res.status(404).json({ message: 'User not found' })
-      return res.status(200).json({ user: rows[0] })
+      const u = rows[0]
+      return res.status(200).json({ user: { ...u, is_admin: !!u.is_admin } })
     }
 
     // ── POST /keys/activate ─────────────────────────────────────────────────
